@@ -40,7 +40,7 @@ class QuizManager:
             return None, "Квіз завершено"
         self.current_item = self.queue.pop(0)
         if self.direction == "Іноземна -> Переклад":
-           promt =  f"Перекладіть: **{self.current_item['word']}**"
+            prompt =  f"Перекладіть: **{self.current_item['word']}**"
         else:
             prompt = f"Перекладіть: **{self.current_item['translation']}**"
         return prompt, ""
