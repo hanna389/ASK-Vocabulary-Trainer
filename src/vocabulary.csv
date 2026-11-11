@@ -1,0 +1,17 @@
+word,translation,pos,success
+milk,молоко,NOUN,50.0
+cat,кіт,NOUN,50.0
+dog,пес,NOUN,50.0
+sing,співати,VERB,50.0
+apple,яблуко,NOUN,50.0
+run,бігти,VERB,50.0
+grape,виноград,NOUN,50.0
+moon,місяць,NOUN,50.0
+cry,плакати,VERB,50.0
+drive,їхати,VERB,50.0
+sun,сонце,PROPN,50.0
+cute,милий,ADJ,50.0
+beautiful,красивий,ADJ,50.0
+play,грати,VERB,50.0
+happy,щасливий,ADJ,50.0
+big,великий,ADJ,50.0

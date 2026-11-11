@@ -1,7 +1,7 @@
 import os
 import pytest
 import pandas as pd
-from src.dictionary import DictionaryManager, DATA_FILE
+from dictionary import DictionaryManager, DATA_FILE
 
 def clear_file():
     if os.path.exists(DATA_FILE):

@@ -21,11 +21,6 @@ def load_data():
         return df
     return pd.DataFrame(columns=EXPECTED_COLS)
 
-
-def save_data(df):
-    df.to_csv(DATA_FILE, index=False, encoding="utf-8")
-
-
 def detect_pos(word):
     if not nlp:
         return "UNKNOWN"
@@ -42,7 +37,10 @@ class DictionaryManager:
     def reload(self):
         self.df = load_data()
         return self.df
-    
+
+    def save_data(self, df):
+        df.to_csv(DATA_FILE, index=False, encoding="utf-8")
+
     def check_exists(self, word):
         if self.df.empty:
             return False
@@ -77,7 +75,7 @@ class DictionaryManager:
             "success": 50.0
         }])
         self.df = pd.concat([self.df, new_row], ignore_index=True)
-        save_data(self.df)
+        self.save_data(self.df)
         return f"Слово «{w}» додано (Частина мови: {pos_tag})", self.df
         
 

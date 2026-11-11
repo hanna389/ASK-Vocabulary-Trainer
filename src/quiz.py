@@ -1,3 +1,6 @@
+import json
+from progress import process_progress
+
 class QuizManager:
     def __init__(self, dictionary_obj):
         self.dictionary = dictionary_obj
@@ -8,6 +11,8 @@ class QuizManager:
         self.incorrect_list = []
         self.correct_list = []
         self.current_item = None
+        self.correct_words_history = []
+        self.user_answers_history = []
 
     def prepare_queue(self, pos_filter, count):
         df = self.dictionary.df
@@ -33,6 +38,8 @@ class QuizManager:
         self.incorrect_list = []
         self.correct_list = []
         self.current_item = None
+        self.correct_words_history = []
+        self.user_answers_history = []
         return "", True
 
     def next_question(self):
@@ -43,34 +50,35 @@ class QuizManager:
             prompt =  f"Перекладіть: **{self.current_item['word']}**"
         else:
             prompt = f"Перекладіть: **{self.current_item['translation']}**"
-        return prompt, ""
+        return prompt
 
     def evaluate_answer(self, user_answer):
         if not self.current_item:
             return "Немає активного питання.", ""
         self.asked_count +=1
         correct_ans = self.current_item["translation"] if self.direction == "Іноземна -> Переклад" else self.current_item["word"]
+        self.correct_words_history.append(correct_ans)
+        self.user_answers_history.append(user_answer)
         is_correct = (user_answer.strip().lower() == correct_ans.lower())
         self.dictionary.update_success(self.current_item["word"], is_correct)
         if is_correct:
             self.correct_count += 1
             self.correct_list.append(self.current_item["word"])
+            is_correct = (user_answer.strip().lower() == correct_ans.lower())
             msg = "Правильно!"
         else:
             self.incorrect_list.append((self.current_item["word"], correct_ans))
+            self.user_answers_history.append(user_answer)
             msg = f"Помилка. Правильна відповідь: {correct_ans}"
         return msg, correct_ans
 
-    def get_summary(self):
-        percent = (self.correct_count / self.asked_count * 100) if self.asked_count > 0 else 0.0
-        summary = (
-            f"### Результати квізу\n"
-            f"- Загалом запитань: {self.asked_count}\n"
-            f"- Правильних відповідей: {self.correct_count} ({percent:.1f}%)\n"
-        )
-        if self.correct_list:
-            summary += f"- Правильно відгадані: {', '.join(self.correct_list)}\n"
-        if self.incorrect_list:
-            incorrect_str = ". ".join([f"{w} ({tr})" for w, tr in self.incorrect_list])
-            summary += f"- Неправильні відповіді: {incorrect_str}\n"
-        return summary
+    def finish_quiz(self, filepath="quiz_data.json"):
+        data = {    
+            "correct_words": self.correct_words_history,
+            "user_answers": self.user_answers_history
+        }
+        
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+            
+        return process_progress(filepath)
